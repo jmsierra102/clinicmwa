@@ -4,6 +4,34 @@
 $user_id = $_SESSION['id'];
 $message = '';
 
+/**
+ * Validates if the selected appointment time is within clinic hours.
+ *
+ * @param DateTime $dateTime The appointment datetime object.
+ * @return bool True if valid, false otherwise.
+ */
+function is_valid_appointment_time(DateTime $dateTime) {
+    $day_of_week = $dateTime->format('N'); // 1 (for Monday) through 7 (for Sunday)
+    $time = $dateTime->format('H:i');
+
+    // Rule 1: No Sundays
+    if ($day_of_week == 7) {
+        return false;
+    }
+
+    // Rule 2: Check time boundaries (8:00 AM to 5:00 PM)
+    if ($time < '08:00' || $time >= '17:00') {
+        return false;
+    }
+
+    // Rule 3: No lunch break (12:00 PM to 1:00 PM)
+    if ($time >= '12:00' && $time < '13:00') {
+        return false;
+    }
+
+    return true;
+}
+
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $pet_id = $_POST['pet_id'];
@@ -13,34 +41,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $reason = $_POST['reason'];
 
     // Combine date and time
-    $full_datetime = $appointment_date . ' ' . $appointment_time;
+    $full_datetime_str = $appointment_date . ' ' . $appointment_time;
+    $full_datetime_obj = new DateTime($full_datetime_str);
 
     // Basic validation
-    if (empty($pet_id) || empty($vet_id) || empty($full_datetime)) {
+    if (empty($pet_id) || empty($vet_id) || empty($full_datetime_str)) {
         $message = '<div class="alert alert-danger">Please fill in all required fields.</div>';
+    } elseif (!is_valid_appointment_time($full_datetime_obj)) {
+        $message = '<div class="alert alert-danger">The selected time is outside of clinic hours. Please choose a time between 8:00 AM and 5:00 PM, Monday to Saturday (excluding 12:00 PM - 1:00 PM).</div>';
     } else {
-        // Check that the selected pet belongs to the user
-        $check_sql = "SELECT id FROM pets WHERE id = ? AND owner_id = ?";
-        $check_stmt = $conn->prepare($check_sql);
-        $check_stmt->bind_param("ss", $pet_id, $user_id);
-        $check_stmt->execute();
-        $check_stmt->store_result();
+        // Final server-side check for double-booking
+        $conflict_sql = "SELECT id FROM appointments WHERE appointment_date = ?";
+        $conflict_stmt = $conn->prepare($conflict_sql);
+        $conflict_stmt->bind_param("s", $full_datetime_str);
+        $conflict_stmt->execute();
+        $conflict_stmt->store_result();
 
-        if ($check_stmt->num_rows > 0) {
-            $new_id = generate_id('AP', $conn, 'appointments');
-            $status = 'scheduled';
-            
-            $sql = "INSERT INTO appointments (id, pet_id, vet_id, appointment_date, reason, status) VALUES (?, ?, ?, ?, ?, ?)";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("ssssss", $new_id, $pet_id, $vet_id, $full_datetime, $reason, $status);
-
-            if ($stmt->execute()) {
-                $message = '<div class="alert alert-success">Appointment booked successfully!</div>';
-            } else {
-                $message = '<div class="alert alert-danger">There was an error booking your appointment. Please try again.</div>';
-            }
+        if ($conflict_stmt->num_rows > 0) {
+            $message = '<div class="alert alert-danger">This time slot has just been booked. Please select a different time.</div>';
         } else {
-            $message = '<div class="alert alert-danger">Invalid pet selected.</div>';
+            // Check that the selected pet belongs to the user
+            $check_sql = "SELECT id FROM pets WHERE id = ? AND owner_id = ?";
+            $check_stmt = $conn->prepare($check_sql);
+            $check_stmt->bind_param("ss", $pet_id, $user_id);
+            $check_stmt->execute();
+            $check_stmt->store_result();
+
+            if ($check_stmt->num_rows > 0) {
+                $new_id = generate_id('AP', $conn, 'appointments');
+                $status = 'scheduled';
+                
+                $sql = "INSERT INTO appointments (id, pet_id, vet_id, appointment_date, reason, status) VALUES (?, ?, ?, ?, ?, ?)";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("ssssss", $new_id, $pet_id, $vet_id, $full_datetime_str, $reason, $status);
+
+                if ($stmt->execute()) {
+                    $message = '<div class="alert alert-success">Appointment booked successfully!</div>';
+                } else {
+                    $message = '<div class="alert alert-danger">There was an error booking your appointment. Please try again.</div>';
+                }
+            } else {
+                $message = '<div class="alert alert-danger">Invalid pet selected.</div>';
+            }
         }
     }
 }
@@ -95,7 +137,9 @@ $vets_result = $conn->query("SELECT id, name FROM veterinarians ORDER BY name AS
 
         <div class="form-group">
             <label for="appointment_time">Time</label>
-            <input type="time" id="appointment_time" name="appointment_time" required>
+            <select id="appointment_time" name="appointment_time" required>
+                <option value="">-- Select a date first --</option>
+            </select>
         </div>
 
         <div class="form-group">

@@ -20,10 +20,13 @@ body {
 }
 
 .container {
-    width: 95%;
-    max-width: 1500px;
-    margin: 20px auto;
+    flex-grow: 1;
     padding: 20px;
+}
+
+/* --- Main Layout --- */
+.main-layout {
+    display: flex;
 }
 
 /* --- Header & Navigation --- */
@@ -36,6 +39,28 @@ header {
     align-items: center;
     border-bottom: 1px solid var(--border-color);
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+}
+
+.toggle-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    margin-right: 15px;
+}
+
+.toggle-btn svg {
+    width: 24px;
+    height: 24px;
+    fill: #333;
 }
 
 .logo {
@@ -68,8 +93,12 @@ header {
 }
 
 nav {
-    background-color: var(--primary-color);
-    padding: 0 20px;
+    width: 250px;
+    background-color: #333;
+    height: 100vh;
+    padding: 20px 0;
+    flex-shrink: 0;
+    transition: width 0.3s ease;
 }
 
 nav ul {
@@ -77,20 +106,49 @@ nav ul {
     padding: 0;
     list-style: none;
     display: flex;
+    flex-direction: column;
 }
 
 nav ul li a {
-    display: block;
+    display: flex;
+    align-items: center;
     color: var(--white);
     text-decoration: none;
     padding: 15px 20px;
     transition: background-color 0.3s;
+    white-space: nowrap;
+}
+
+nav ul li a svg {
+    width: 24px;
+    height: 24px;
+    margin-right: 15px;
+    fill: currentColor;
+    flex-shrink: 0;
 }
 
 nav ul li a:hover,
 nav ul li a.active {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: var(--primary-color);
 }
+
+/* Collapsed Sidebar Styles */
+.main-layout.sidebar-collapsed nav {
+    width: 80px;
+}
+
+.main-layout.sidebar-collapsed nav ul li a span {
+    display: none;
+}
+
+.main-layout.sidebar-collapsed nav ul li a {
+    justify-content: center;
+}
+
+.main-layout.sidebar-collapsed nav ul li a svg {
+    margin-right: 0;
+}
+
 
 /* --- Authentication Pages (Login/Signup) --- */
 .auth-container {
