@@ -56,7 +56,7 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
                         <span>Veterinarians</span>
                     </a></li>
                     <li><a href="?page=pets" class="<?php echo $page == 'pets' ? 'active' : ''; ?>">
-                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path></svg>
+                        <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8zm-1-3.5a1.5 1.5 0 1 1 1.5-1.5 1.5 1.5 0 0 1-1.5 1.5zm-3.5-2a1.5 1.5 0 1 1 1.5-1.5 1.5 1.5 0 0 1-1.5 1.5zm7 0a1.5 1.5 0 1 1 1.5-1.5 1.5 1.5 0 0 1-1.5 1.5zm-3.5-5a1.5 1.5 0 1 1 1.5-1.5 1.5 1.5 0 0 1-1.5 1.5z"></path></svg>
                         <span>Pets</span>
                     </a></li>
                     <li><a href="?page=clients" class="<?php echo ($page == 'clients' || $page == 'view_client') ? 'active' : ''; ?>">
@@ -69,7 +69,7 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
                         <span>My Appointments</span>
                     </a></li>
                     <li><a href="?page=my_pets" class="<?php echo $page == 'my_pets' ? 'active' : ''; ?>">
-                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path></svg>
+                        <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8zm-1-3.5a1.5 1.5 0 1 1 1.5-1.5 1.5 1.5 0 0 1-1.5 1.5zm-3.5-2a1.5 1.5 0 1 1 1.5-1.5 1.5 1.5 0 0 1-1.5 1.5zm7 0a1.5 1.5 0 1 1 1.5-1.5 1.5 1.5 0 0 1-1.5 1.5zm-3.5-5a1.5 1.5 0 1 1 1.5-1.5 1.5 1.5 0 0 1-1.5 1.5z"></path></svg>
                         <span>My Pets</span>
                     </a></li>
                     <li><a href="?page=book_appointment" class="<?php echo $page == 'book_appointment' ? 'active' : ''; ?>">
