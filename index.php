@@ -41,7 +41,7 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
                 <li><a href="?page=appointments" class="<?php echo $page == 'appointments' ? 'active' : ''; ?>">Appointments</a></li>
                 <li><a href="?page=veterinarians" class="<?php echo $page == 'veterinarians' ? 'active' : ''; ?>">Veterinarians</a></li>
                 <li><a href="?page=pets" class="<?php echo $page == 'pets' ? 'active' : ''; ?>">Pets</a></li>
-                <li><a href="?page=clients" class="<?php echo $page == 'clients' ? 'active' : ''; ?>">Clients</a></li>
+                <li><a href="?page=clients" class="<?php echo ($page == 'clients' || $page == 'view_client') ? 'active' : ''; ?>">Clients</a></li>
             <?php else: // Client ?>
                 <li><a href="?page=my_appointments" class="<?php echo $page == 'my_appointments' ? 'active' : ''; ?>">My Appointments</a></li>
                 <li><a href="?page=my_pets" class="<?php echo $page == 'my_pets' ? 'active' : ''; ?>">My Pets</a></li>

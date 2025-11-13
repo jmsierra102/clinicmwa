@@ -10,11 +10,12 @@
                 <th>Name</th>
                 <th>Email</th>
                 <th>Date Registered</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
             <?php
-            $sql = "SELECT firstname, lastname, email, created_at
+            $sql = "SELECT id, firstname, lastname, email, created_at
                     FROM users
                     WHERE role = 'client'
                     ORDER BY lastname, firstname ASC";
@@ -26,10 +27,11 @@
                     echo "<td>" . e($row['firstname'] . ' ' . $row['lastname']) . "</td>";
                     echo "<td>" . e($row['email']) . "</td>";
                     echo "<td>" . $dt->format('M d, Y') . "</td>";
+                    echo '<td><a href="?page=view_client&id=' . e($row['id']) . '">View</a></td>';
                     echo "</tr>";
                 }
             } else {
-                echo '<tr><td colspan="3">No clients found.</td></tr>';
+                echo '<tr><td colspan="4">No clients found.</td></tr>';
             }
             ?>
         </tbody>
