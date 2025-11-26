@@ -30,7 +30,7 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
                 </button>
                 <div class="logo">
                     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"></path></svg>
-                    <span>VetClinic</span>
+                    <span>Malu-pet Clinic</span>
                 </div>
             </div>
             <div class="user-info">

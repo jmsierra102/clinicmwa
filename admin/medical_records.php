@@ -90,10 +90,10 @@ $records = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                                     <strong>Visit Date:</strong> <?php echo e(date('F j, Y', strtotime($record['visit_date']))); ?>
                                 </div>
                                 <div class="record-body">
-                                    <p><strong>Diagnosis:</strong> <?php echo e($record['diagnosis']); ?></p>
-                                    <p><strong>Treatment:</strong> <?php echo e($record['treatment']); ?></p>
+                                    <p><strong>Diagnosis:</strong> <?php echo nl2br(e($record['diagnosis'])); ?></p>
+                                    <p><strong>Treatment:</strong> <?php echo nl2br(e($record['treatment'])); ?></p>
                                     <?php if (!empty($record['notes'])): ?>
-                                        <p><strong>Notes:</strong> <?php echo e($record['notes']); ?></p>
+                                        <p><strong>Notes:</strong> <?php echo nl2br(e($record['notes'])); ?></p>
                                     <?php endif; ?>
                                 </div>
                             </div>
