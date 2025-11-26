@@ -70,3 +70,17 @@ ALTER TABLE `pets`
 ALTER TABLE `appointments`
   ADD CONSTRAINT `appointments_ibfk_1` FOREIGN KEY (`pet_id`) REFERENCES `pets` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `appointments_ibfk_2` FOREIGN KEY (`vet_id`) REFERENCES `veterinarians` (`id`) ON DELETE CASCADE;
+
+-- Medical Records table
+CREATE TABLE `medical_records` (
+  `id` varchar(7) NOT NULL,
+  `pet_id` varchar(7) NOT NULL,
+  `visit_date` date NOT NULL,
+  `diagnosis` text NOT NULL,
+  `treatment` text NOT NULL,
+  `notes` text DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `pet_id` (`pet_id`),
+  CONSTRAINT `medical_records_ibfk_1` FOREIGN KEY (`pet_id`) REFERENCES `pets` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+

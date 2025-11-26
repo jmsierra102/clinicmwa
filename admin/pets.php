@@ -12,11 +12,12 @@
                 <th>Breed</th>
                 <th>Age</th>
                 <th>Owner</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
             <?php
-            $sql = "SELECT p.name, p.species, p.breed, p.age, u.firstname, u.lastname, u.email
+            $sql = "SELECT p.id, p.name, p.species, p.breed, p.age, u.firstname, u.lastname, u.email
                     FROM pets p
                     JOIN users u ON p.owner_id = u.id
                     ORDER BY u.lastname, p.name ASC";
@@ -29,10 +30,11 @@
                     echo "<td>" . e($row['breed']) . "</td>";
                     echo "<td>" . e($row['age']) . "</td>";
                     echo "<td>" . e($row['firstname'] . ' ' . $row['lastname']) . " (" . e($row['email']) . ")</td>";
+                    echo '<td><a href="?page=medical_records&pet_id=' . e($row['id']) . '">Medical Records</a></td>';
                     echo "</tr>";
                 }
             } else {
-                echo '<tr><td colspan="5">No pets found.</td></tr>';
+                echo '<tr><td colspan="6">No pets found.</td></tr>';
             }
             ?>
         </tbody>

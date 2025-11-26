@@ -9,27 +9,29 @@
     --danger-color: #e74c3c;
     --success-color: #2ecc71;
     --font-family: 'Helvetica Neue', Arial, sans-serif;
+    --header-height: 70px; /* Explicit header height */
+    --sidebar-width-expanded: 250px;
+    --sidebar-width-collapsed: 80px;
 }
 
-body {
+html, body {
+    height: 100%;
+    margin: 0;
     font-family: var(--font-family);
     background-color: var(--light-gray);
     color: var(--text-color);
     line-height: 1.6;
-    margin: 0;
+    overflow-x: hidden; /* Prevent horizontal scroll for fixed elements */
 }
 
-.container {
-    flex-grow: 1;
-    padding: 20px;
-}
-
-/* --- Main Layout --- */
-.main-layout {
+#app { /* This #app wrapper will encompass header + main content */
     display: flex;
+    flex-direction: column; /* Stack header above main content */
+    height: 100%;
+    position: relative; /* For stacking context if needed */
 }
 
-/* --- Header & Navigation --- */
+/* --- Header --- */
 header {
     background-color: var(--white);
     color: var(--text-color);
@@ -39,9 +41,14 @@ header {
     align-items: center;
     border-bottom: 1px solid var(--border-color);
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    position: sticky;
+    position: sticky; /* Make header sticky to viewport */
     top: 0;
+    left: 0;
+right: 0;
+    height: var(--header-height); /* Explicit height */
+    box-sizing: border-box; /* Include padding in height */
     z-index: 1000;
+    flex-shrink: 0; /* Prevent header from shrinking */
 }
 
 .header-left {
@@ -92,13 +99,25 @@ header {
     text-decoration: underline;
 }
 
+/* --- Main Layout (Content area excluding header) --- */
+.main-layout {
+    display: flex; /* Flex container for nav and actual page content */
+    flex-grow: 1; /* Fill remaining vertical space */
+    overflow: hidden; /* Prevent this container from scrolling itself */
+}
+
+/* --- Navigation (Sidebar) --- */
 nav {
-    width: 250px;
+    width: var(--sidebar-width-expanded);
     background-color: #333;
-    height: 100vh;
-    padding: 20px 0;
-    flex-shrink: 0;
+    padding-top: 20px;
+    flex-shrink: 0; /* Prevent sidebar from shrinking */
     transition: width 0.3s ease;
+    overflow-y: auto; /* Enable scrolling for nav content */
+    height: 100%; /* Take full height of main-layout */
+    position: sticky; /* Make sidebar sticky within main-layout */
+    top: 0; /* Position relative to its flex container, main-layout */
+    z-index: 999; /* Below header, above content */
 }
 
 nav ul {
@@ -134,7 +153,7 @@ nav ul li a.active {
 
 /* Collapsed Sidebar Styles */
 .main-layout.sidebar-collapsed nav {
-    width: 80px;
+    width: var(--sidebar-width-collapsed);
 }
 
 .main-layout.sidebar-collapsed nav ul li a span {
@@ -149,6 +168,13 @@ nav ul li a.active {
     margin-right: 0;
 }
 
+/* --- Main Content Area --- */
+.container {
+    flex-grow: 1; /* Allow content to take remaining horizontal space */
+    padding: 20px;
+    overflow-y: auto; /* Enable scrolling for main content */
+    height: 100%; /* Take full height of main-layout */
+}
 
 /* --- Authentication Pages (Login/Signup) --- */
 .auth-container {
@@ -353,4 +379,132 @@ table td .actions a.delete {
     margin-top: 0;
     border-bottom: 1px solid var(--border-color);
     padding-bottom: 10px;
+}
+
+/* --- Two Column Layout --- */
+.two-column-layout {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap; /* Allow columns to wrap on smaller screens */
+}
+
+.column {
+    flex: 1;
+    min-width: 300px; /* Ensure columns don't get too small */
+}
+
+/* --- Medical Records Card Layout --- */
+.records-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.record-card {
+    background-color: var(--white);
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+    margin-bottom: 0; /* Remove redundant margin */
+}
+
+.record-header {
+    background-color: var(--light-gray);
+    padding: 15px;
+    border-bottom: 1px solid var(--border-color);
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.record-body {
+    padding: 15px;
+}
+
+.record-body p {
+    margin: 0 0 10px;
+}
+
+.record-body p:last-child {
+    margin-bottom: 0;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) {
+    header {
+        padding: 10px 15px;
+        height: auto; /* Allow header to adjust height */
+    }
+
+    .header-left {
+        flex-grow: 1;
+        justify-content: space-between;
+    }
+
+    .toggle-btn {
+        margin-right: 0;
+    }
+
+    .user-info {
+        display: none; /* Hide user info on small screens to save space */
+    }
+
+    .main-layout {
+        flex-direction: column; /* Stack sidebar and content vertically */
+    }
+
+    nav {
+        position: static; /* No longer fixed, scrolls with content */
+        width: 100%;
+        height: auto;
+        max-height: none;
+        padding-top: 0;
+        top: auto;
+    }
+
+    .main-layout.sidebar-collapsed nav {
+        width: 100%;
+    }
+
+    nav ul {
+        flex-direction: row; /* Horizontal nav for collapsed/mobile */
+        justify-content: space-around;
+        border-bottom: 1px solid #444;
+    }
+
+    nav ul li a {
+        padding: 10px 15px;
+        justify-content: center;
+        flex-direction: column; /* Stack icon and text */
+        font-size: 0.8em;
+    }
+
+    nav ul li a svg {
+        margin-right: 0;
+        margin-bottom: 5px;
+    }
+
+    nav ul li a span {
+        display: block !important; /* Always show text on mobile nav */
+    }
+
+    .main-layout.sidebar-collapsed nav ul li a span {
+        display: block !important;
+    }
+
+    .container {
+        margin-left: 0; /* No margin when sidebar is stacked */
+        height: auto;
+        padding: 15px;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr; /* Single column for dashboard cards */
+    }
+
+    .two-column-layout {
+        flex-direction: column; /* Stack medical records columns */
+    }
+
+    .column {
+        min-width: unset; /* Remove min-width for stacked columns */
+    }
 }
