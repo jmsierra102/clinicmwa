@@ -27,10 +27,10 @@ if (isset($_GET['action']) && $_GET['action'] == 'cancel' && isset($_GET['id']))
 echo $message;
 
 // Fetch upcoming appointments
-$upcoming_sql = "SELECT a.id, a.appointment_date, a.reason, a.status, p.name as pet_name, v.name as vet_name
+$upcoming_sql = "SELECT a.id, a.appointment_date, a.reason, a.status, p.name as pet_name, v.firstname as vet_firstname, v.lastname as vet_lastname
                  FROM appointments a
                  JOIN pets p ON a.pet_id = p.id
-                 JOIN veterinarians v ON a.vet_id = v.id
+                 JOIN users v ON a.vet_id = v.id
                  WHERE p.owner_id = ? AND a.status = 'scheduled' AND a.appointment_date >= NOW()
                  ORDER BY a.appointment_date ASC";
 $stmt_upcoming = $conn->prepare($upcoming_sql);
@@ -39,11 +39,11 @@ $stmt_upcoming->execute();
 $upcoming_result = $stmt_upcoming->get_result();
 
 // Fetch past appointments
-$past_sql = "SELECT a.id, a.appointment_date, a.reason, a.status, p.name as pet_name, v.name as vet_name
+$past_sql = "SELECT a.id, a.appointment_date, a.reason, a.status, p.name as pet_name, v.firstname as vet_firstname, v.lastname as vet_lastname
              FROM appointments a
              JOIN pets p ON a.pet_id = p.id
-             JOIN veterinarians v ON a.vet_id = v.id
-             WHERE p.owner_id = ? AND (a.status != 'scheduled' OR a.appointment_date < NOW())
+             JOIN users v ON a.vet_id = v.id
+             WHERE p.owner_id = ? AND (a.status != 'scheduled' OR a.appointment_date < NOW()) AND v.role = 'veterinarian'
              ORDER BY a.appointment_date DESC";
 $stmt_past = $conn->prepare($past_sql);
 $stmt_past->bind_param("s", $user_id);
@@ -74,7 +74,7 @@ $past_result = $stmt_past->get_result();
                     <tr>
                         <td><?php echo $dt->format('l, M j, Y @ g:i A'); ?></td>
                         <td><?php echo e($row['pet_name']); ?></td>
-                        <td><?php echo get_vet_name($row['vet_name']); ?></td>
+                        <td><?php echo get_vet_name(e($row['vet_firstname']) . ' ' . e($row['vet_lastname'])); ?></td>
                         <td><?php echo e($row['reason']); ?></td>
                         <td class="actions">
                             <a href="?page=my_appointments&action=cancel&id=<?php echo e($row['id']); ?>" class="delete" onclick="return confirm('Are you sure you want to cancel this appointment?');">Cancel</a>
@@ -108,7 +108,7 @@ $past_result = $stmt_past->get_result();
                     <tr>
                         <td><?php echo $dt->format('M j, Y'); ?></td>
                         <td><?php echo e($row['pet_name']); ?></td>
-                        <td><?php echo get_vet_name($row['vet_name']); ?></td>
+                        <td><?php echo get_vet_name(e($row['vet_firstname']) . ' ' . e($row['vet_lastname'])); ?></td>
                         <td><?php echo e($row['reason']); ?></td>
                         <td><?php echo e(ucfirst($row['status'])); ?></td>
                     </tr>

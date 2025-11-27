@@ -47,7 +47,7 @@ if ($action == 'edit' && $id) {
     $current_data = $result->fetch_assoc();
     
     $pets = $conn->query("SELECT p.id, p.name, u.firstname, u.lastname FROM pets p JOIN users u ON p.owner_id = u.id");
-    $vets = $conn->query("SELECT id, name FROM veterinarians");
+    $vets = $conn->query("SELECT id, firstname, lastname FROM users WHERE role = 'veterinarian'");
 ?>
     <h2>Edit Appointment</h2>
     <div class="form-wrapper">
@@ -67,7 +67,7 @@ if ($action == 'edit' && $id) {
                 <select name="vet_id" required>
                     <?php while($vet = $vets->fetch_assoc()): ?>
                         <option value="<?php echo e($vet['id']); ?>" <?php echo $current_data['vet_id'] == $vet['id'] ? 'selected' : ''; ?>>
-                            <?php echo get_vet_name($vet['name']); ?>
+                            <?php echo get_vet_name(e($vet['firstname']) . ' ' . e($vet['lastname'])); ?>
                         </option>
                     <?php endwhile; ?>
                 </select>
@@ -116,11 +116,12 @@ if ($action == 'edit' && $id) {
             <tbody>
                 <?php
                 $sql = "SELECT a.id, a.appointment_date, a.reason, a.status, p.name as pet_name, 
-                               u.firstname, u.lastname, v.name as vet_name
+                               u.firstname, u.lastname, v.firstname as vet_firstname, v.lastname as vet_lastname
                         FROM appointments a
                         JOIN pets p ON a.pet_id = p.id
                         JOIN users u ON p.owner_id = u.id
-                        JOIN veterinarians v ON a.vet_id = v.id
+                        JOIN users v ON a.vet_id = v.id
+                        WHERE v.role = 'veterinarian'
                         ORDER BY a.appointment_date DESC";
                 $result = $conn->query($sql);
                 if ($result->num_rows > 0) {
@@ -130,7 +131,7 @@ if ($action == 'edit' && $id) {
                         echo "<td>" . $dt->format('M d, Y @ h:i A') . "</td>";
                         echo "<td>" . e($row['pet_name']) . "</td>";
                         echo "<td>" . e($row['firstname'] . ' ' . $row['lastname']) . "</td>";
-                        echo "<td>" . get_vet_name($row['vet_name']) . "</td>";
+                        echo "<td>" . get_vet_name(e($row['vet_firstname']) . ' ' . e($row['vet_lastname'])) . "</td>";
                         echo "<td>" . e($row['reason']) . "</td>";
                         echo "<td>" . e(ucfirst($row['status'])) . "</td>";
                         echo '<td class="actions">';

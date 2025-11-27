@@ -99,14 +99,14 @@ right: 0;
     text-decoration: underline;
 }
 
-/* --- Main Layout (Content area excluding header) --- */
+/* --- Main Layout (Content area excluding header) */
 .main-layout {
     display: flex; /* Flex container for nav and actual page content */
     flex-grow: 1; /* Fill remaining vertical space */
     overflow: hidden; /* Prevent this container from scrolling itself */
 }
 
-/* --- Navigation (Sidebar) --- */
+/* --- Navigation (Sidebar) */
 nav {
     width: var(--sidebar-width-expanded);
     background-color: #333;
@@ -168,7 +168,7 @@ nav ul li a.active {
     margin-right: 0;
 }
 
-/* --- Main Content Area --- */
+/* --- Main Content Area */
 .container {
     flex-grow: 1; /* Allow content to take remaining horizontal space */
     padding: 20px;
@@ -176,7 +176,7 @@ nav ul li a.active {
     height: 100%; /* Take full height of main-layout */
 }
 
-/* --- Authentication Pages (Login/Signup) --- */
+/* --- Authentication Pages (Login/Signup) */
 .auth-container {
     width: 100%;
     max-width: 420px;
@@ -214,7 +214,7 @@ nav ul li a.active {
     text-decoration: none;
 }
 
-/* --- Forms --- */
+/* --- Forms */
 .form-wrapper {
     background-color: var(--white);
     padding: 30px;
@@ -258,7 +258,7 @@ textarea {
     resize: vertical;
 }
 
-/* --- Buttons --- */
+/* --- Buttons */
 .btn {
     display: inline-block;
     padding: 12px 25px;
@@ -297,7 +297,7 @@ textarea {
     color: var(--white);
 }
 
-/* --- Tables --- */
+/* --- Tables */
 .table-wrapper {
     overflow-x: auto;
     background-color: var(--white);
@@ -340,7 +340,7 @@ table td .actions a.delete {
     color: var(--danger-color);
 }
 
-/* --- Alerts --- */
+/* --- Alerts */
 .alert {
     padding: 15px;
     margin-bottom: 20px;
@@ -361,7 +361,7 @@ table td .actions a.delete {
     border-color: #f5c6cb;
 }
 
-/* --- Dashboard Specifics --- */
+/* --- Dashboard Specifics */
 .dashboard-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -381,7 +381,7 @@ table td .actions a.delete {
     padding-bottom: 10px;
 }
 
-/* --- Two Column Layout --- */
+/* --- Two Column Layout */
 .two-column-layout {
     display: flex;
     gap: 20px;
@@ -393,7 +393,7 @@ table td .actions a.delete {
     min-width: 300px; /* Ensure columns don't get too small */
 }
 
-/* --- Medical Records Card Layout --- */
+/* --- Medical Records Card Layout */
 .records-container {
     display: flex;
     flex-direction: column;
@@ -427,7 +427,7 @@ table td .actions a.delete {
     margin-bottom: 0;
 }
 
-/* --- Responsive Adjustments --- */
+/* --- Responsive Adjustments */
 @media (max-width: 768px) {
     header {
         padding: 10px 15px;
@@ -506,5 +506,151 @@ table td .actions a.delete {
 
     .column {
         min-width: unset; /* Remove min-width for stacked columns */
+    }
+}
+
+/* Veterinarian Dashboard Enhancements */
+.dashboard-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.dashboard-card {
+    flex: 1 1 300px; /* Flex-grow, flex-shrink, flex-basis */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.dashboard-card h3 {
+    font-size: 1.2em;
+    color: var(--primary-color);
+}
+
+.dashboard-card p {
+    flex-grow: 1;
+}
+
+/* Status Badges */
+.status-scheduled {
+    background-color: #eaf2fb;
+    color: #4a90e2;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+.status-completed {
+    background-color: #d4edda;
+    color: #2b6b4c;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+.status-cancelled {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+.btn-sm {
+    padding: 8px 12px;
+    font-size: 0.9em;
+}
+
+/* View Appointment Page */
+.view-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.details-grid-two-col {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.details-card {
+    background-color: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    flex: 1 1 300px;
+}
+
+.details-card h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.1em;
+    margin: 0;
+    padding: 15px;
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--light-gray);
+}
+
+
+
+.details-body {
+    padding: 20px;
+}
+
+.details-body p {
+    margin: 0 0 15px;
+}
+
+.details-body p:last-child {
+    margin-bottom: 0;
+}
+
+.actions-bar {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 480px) {
+    .actions-bar .btn {
+        width: 100%;
+        text-align: center;
+    }
+}
+.form-actions-bottom {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: flex-start; /* Align to the start of the flex container */
+    margin-top: 20px;
+}
+
+.form-actions-bottom .btn {
+    flex-grow: 1; /* Allow buttons to grow and fill space */
+    min-width: 150px; /* Minimum width for buttons before wrapping */
+}
+
+@media (max-width: 480px) {
+    .form-actions-bottom {
+        justify-content: center; /* Center buttons on small screens */
+    }
+    .form-actions-bottom .btn {
+        width: 100%; /* Full width on very small screens */
+        flex-grow: 0; /* Prevent growing once full width */
     }
 }

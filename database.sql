@@ -1,7 +1,3 @@
-
-CREATE DATABASE IF NOT EXISTS MaluPetClinic;
-USE MaluPetClinic;
-
 -- Users table for pet owners (clients) and admins/vets
 CREATE TABLE `users` (
   `id` varchar(7) NOT NULL,
@@ -9,20 +5,9 @@ CREATE TABLE `users` (
   `lastname` varchar(50) NOT NULL,
   `email` varchar(100) NOT NULL UNIQUE,
   `password` varchar(255) NOT NULL,
-  `role` enum('client','admin') NOT NULL,
+  `role` enum('client','admin','veterinarian') NOT NULL,
+  `phone` varchar(20) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- Default admin user (password: admin123)
-INSERT INTO `users` (`id`, `firstname`, `lastname`, `email`, `password`, `role`) VALUES
-('AD-001', 'Admin', 'User', 'admin@clinic.com', '$2y$10$5jJ8L.gE0s5jJ8L.gE0s5uJ8L.gE0s5jJ8L.gE0s5jJ8L.gE0s5jJ', 'admin');
-
--- Veterinarians table
-CREATE TABLE `veterinarians` (
-  `id` varchar(7) NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `email` varchar(100) NOT NULL UNIQUE,
-  `phone` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Pets table
@@ -51,9 +36,6 @@ CREATE TABLE `appointments` (
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`);
 
-ALTER TABLE `veterinarians`
-  ADD PRIMARY KEY (`id`);
-
 ALTER TABLE `pets`
   ADD PRIMARY KEY (`id`),
   ADD KEY `owner_id` (`owner_id`);
@@ -69,7 +51,7 @@ ALTER TABLE `pets`
 
 ALTER TABLE `appointments`
   ADD CONSTRAINT `appointments_ibfk_1` FOREIGN KEY (`pet_id`) REFERENCES `pets` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `appointments_ibfk_2` FOREIGN KEY (`vet_id`) REFERENCES `veterinarians` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `appointments_ibfk_2` FOREIGN KEY (`vet_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 -- Medical Records table
 CREATE TABLE `medical_records` (
@@ -83,4 +65,3 @@ CREATE TABLE `medical_records` (
   KEY `pet_id` (`pet_id`),
   CONSTRAINT `medical_records_ibfk_1` FOREIGN KEY (`pet_id`) REFERENCES `pets` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-

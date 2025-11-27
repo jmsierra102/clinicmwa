@@ -63,6 +63,15 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
                             <svg viewBox="0 0 24 24"><path d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z"></path></svg>
                             <span>Clients</span>
                         </a></li>
+                    <?php elseif ($role == 'veterinarian'): ?>
+                        <li><a href="?page=appointments" class="<?php echo $page == 'appointments' ? 'active' : ''; ?>">
+                            <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z"></path></svg>
+                            <span>Appointments</span>
+                        </a></li>
+                        <li><a href="?page=patients" class="<?php echo $page == 'patients' ? 'active' : ''; ?>">
+                            <svg viewBox="0 0 24 24"><path d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z"></path></svg>
+                            <span>Patients</span>
+                        </a></li>
                     <?php else: // Client ?>
                         <li><a href="?page=my_appointments" class="<?php echo $page == 'my_appointments' ? 'active' : ''; ?>">
                             <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z"></path></svg>
@@ -89,6 +98,8 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
                 // Dynamically include page content based on role and page
                 if ($role == 'admin') {
                     $page_path = "admin/{$page}.php";
+                } elseif ($role == 'veterinarian') {
+                    $page_path = "veterinarian/{$page}.php";
                 } else {
                     $page_path = "client/{$page}.php";
                 }
@@ -99,6 +110,8 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
                     // Fallback to a default dashboard if the page doesn't exist
                     if ($role == 'admin') {
                         include 'admin/dashboard.php';
+                    } elseif ($role == 'veterinarian') {
+                        include 'veterinarian/dashboard.php';
                     } else {
                         include 'client/dashboard.php';
                     }

@@ -5,7 +5,7 @@
 $appointments_count = $conn->query("SELECT COUNT(*) as count FROM appointments")->fetch_assoc()['count'];
 $pets_count = $conn->query("SELECT COUNT(*) as count FROM pets")->fetch_assoc()['count'];
 $clients_count = $conn->query("SELECT COUNT(*) as count FROM users WHERE role = 'client'")->fetch_assoc()['count'];
-$vets_count = $conn->query("SELECT COUNT(*) as count FROM veterinarians")->fetch_assoc()['count'];
+$vets_count = $conn->query("SELECT COUNT(*) as count FROM users WHERE role = 'veterinarian'")->fetch_assoc()['count'];
 
 ?>
 

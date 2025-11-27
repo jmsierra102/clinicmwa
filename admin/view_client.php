@@ -31,11 +31,11 @@ $stmt->close();
 
 // Fetch client's appointments
 $stmt = $conn->prepare("
-    SELECT a.*, p.name as pet_name, v.name as vet_name
+    SELECT a.*, p.name as pet_name, v.firstname as vet_firstname, v.lastname as vet_lastname
     FROM appointments a
     JOIN pets p ON a.pet_id = p.id
-    JOIN veterinarians v ON a.vet_id = v.id
-    WHERE p.owner_id = ?
+    JOIN users v ON a.vet_id = v.id
+    WHERE p.owner_id = ? AND v.role = 'veterinarian'
     ORDER BY a.appointment_date DESC
 ");
 $stmt->bind_param("s", $client_id);
@@ -103,7 +103,7 @@ $stmt->close();
                     <tr>
                         <td><?php echo (new DateTime($appointment['appointment_date']))->format('M d, Y h:i A'); ?></td>
                         <td><?php echo e($appointment['pet_name']); ?></td>
-                        <td><?php echo get_vet_name($appointment['vet_name']); ?></td>
+                        <td><?php echo get_vet_name(e($appointment['vet_firstname']) . ' ' . e($appointment['vet_lastname'])); ?></td>
                         <td><?php echo e($appointment['reason']); ?></td>
                         <td><span class="status-<?php echo e($appointment['status']); ?>"><?php echo e(ucfirst($appointment['status'])); ?></span></td>
                     </tr>

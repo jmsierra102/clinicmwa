@@ -93,7 +93,7 @@ $pets->bind_param("s", $user_id);
 $pets->execute();
 $pets_result = $pets->get_result();
 
-$vets_result = $conn->query("SELECT id, name FROM veterinarians ORDER BY name ASC");
+$vets_result = $conn->query("SELECT id, firstname, lastname FROM users WHERE role = 'veterinarian' ORDER BY lastname, firstname ASC");
 
 ?>
 
@@ -125,7 +125,7 @@ $vets_result = $conn->query("SELECT id, name FROM veterinarians ORDER BY name AS
             <select id="vet_id" name="vet_id" required>
                 <option value="">-- Select a veterinarian --</option>
                 <?php while($vet = $vets_result->fetch_assoc()): ?>
-                    <option value="<?php echo e($vet['id']); ?>"><?php echo get_vet_name($vet['name']); ?></option>
+                    <option value="<?php echo e($vet['id']); ?>"><?php echo get_vet_name(e($vet['firstname']) . ' ' . e($vet['lastname'])); ?></option>
                 <?php endwhile; ?>
             </select>
         </div>

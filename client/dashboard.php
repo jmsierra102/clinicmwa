@@ -5,11 +5,11 @@ $user_id = $_SESSION['id'];
 $firstname = $_SESSION['firstname'];
 
 // Fetch client's upcoming appointments
-$sql = "SELECT a.id, a.appointment_date, v.name as vet_name, p.name as pet_name
+$sql = "SELECT a.id, a.appointment_date, v.firstname as vet_firstname, v.lastname as vet_lastname, p.name as pet_name
         FROM appointments a
-        JOIN veterinarians v ON a.vet_id = v.id
+        JOIN users v ON a.vet_id = v.id
         JOIN pets p ON a.pet_id = p.id
-        WHERE p.owner_id = ? AND a.status = 'scheduled' AND a.appointment_date >= NOW()
+        WHERE p.owner_id = ? AND a.status = 'scheduled' AND a.appointment_date >= NOW() AND v.role = 'veterinarian'
         ORDER BY a.appointment_date ASC
         LIMIT 1";
 $stmt = $conn->prepare($sql);
@@ -37,7 +37,7 @@ $next_appointment = $result->fetch_assoc();
         <h3>Your Next Appointment</h3>
         <p>
             <strong>Pet:</strong> <?php echo e($next_appointment['pet_name']); ?><br>
-            <strong>With:</strong> <?php echo get_vet_name($next_appointment['vet_name']); ?><br>
+            <strong>With:</strong> <?php echo get_vet_name(e($next_appointment['vet_firstname']) . ' ' . e($next_appointment['vet_lastname'])); ?><br>
             <strong>On:</strong> <?php echo $dt->format('l, F j, Y \a\t g:i A'); ?>
         </p>
         <a href="?page=my_appointments" class="btn btn-secondary">View All</a>

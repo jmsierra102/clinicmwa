@@ -7,15 +7,21 @@ $message = '';
 
 // Handle POST requests for add/edit
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = $_POST['name'];
+    $firstname = $_POST['firstname'];
+    $lastname = $_POST['lastname'];
     $email = $_POST['email'];
     $phone = $_POST['phone'];
+    $password = $_POST['password'];
 
     if ($action == 'add') {
-        $new_id = generate_id('VT', $conn, 'veterinarians');
-        $sql = "INSERT INTO veterinarians (id, name, email, phone) VALUES (?, ?, ?, ?)";
+        $new_id = generate_id('VT', $conn, 'users');
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+        $role = 'veterinarian';
+        
+        $sql = "INSERT INTO users (id, firstname, lastname, email, password, role, phone) VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssss", $new_id, $name, $email, $phone);
+        $stmt->bind_param("sssssss", $new_id, $firstname, $lastname, $email, $hashed_password, $role, $phone);
+        
         if ($stmt->execute()) {
             $message = '<div class="alert alert-success">Veterinarian added successfully.</div>';
         } else {
@@ -23,9 +29,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         $action = 'list'; // Return to list view
     } elseif ($action == 'edit' && $id) {
-        $sql = "UPDATE veterinarians SET name = ?, email = ?, phone = ? WHERE id = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssss", $name, $email, $phone, $id);
+        if (!empty($password)) {
+            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+            $sql = "UPDATE users SET firstname = ?, lastname = ?, email = ?, phone = ?, password = ? WHERE id = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("ssssss", $firstname, $lastname, $email, $phone, $hashed_password, $id);
+        } else {
+            $sql = "UPDATE users SET firstname = ?, lastname = ?, email = ?, phone = ? WHERE id = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("sssss", $firstname, $lastname, $email, $phone, $id);
+        }
+
         if ($stmt->execute()) {
             $message = '<div class="alert alert-success">Veterinarian updated successfully.</div>';
         } else {
@@ -37,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Handle delete request
 if ($action == 'delete' && $id) {
-    $sql = "DELETE FROM veterinarians WHERE id = ?";
+    $sql = "DELETE FROM users WHERE id = ? AND role = 'veterinarian'";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $id);
     if ($stmt->execute()) {
@@ -51,9 +65,9 @@ if ($action == 'delete' && $id) {
 echo $message;
 
 if ($action == 'add' || $action == 'edit') {
-    $current_data = ['name' => '', 'email' => '', 'phone' => ''];
+    $current_data = ['firstname' => '', 'lastname' => '', 'email' => '', 'phone' => ''];
     if ($action == 'edit' && $id) {
-        $stmt = $conn->prepare("SELECT * FROM veterinarians WHERE id = ?");
+        $stmt = $conn->prepare("SELECT firstname, lastname, email, phone FROM users WHERE id = ? AND role = 'veterinarian'");
         $stmt->bind_param("s", $id);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -66,8 +80,12 @@ if ($action == 'add' || $action == 'edit') {
     <div class="form-wrapper">
         <form action="?page=veterinarians&action=<?php echo $action; ?><?php echo $id ? '&id='.$id : ''; ?>" method="post">
             <div class="form-group">
-                <label>Full Name (e.g., John Doe)</label>
-                <input type="text" name="name" value="<?php echo e($current_data['name']); ?>" required>
+                <label>First Name</label>
+                <input type="text" name="firstname" value="<?php echo e($current_data['firstname']); ?>" required>
+            </div>
+            <div class="form-group">
+                <label>Last Name</label>
+                <input type="text" name="lastname" value="<?php echo e($current_data['lastname']); ?>" required>
             </div>
             <div class="form-group">
                 <label>Email</label>
@@ -76,6 +94,10 @@ if ($action == 'add' || $action == 'edit') {
             <div class="form-group">
                 <label>Phone</label>
                 <input type="text" name="phone" value="<?php echo e($current_data['phone']); ?>">
+            </div>
+            <div class="form-group">
+                <label>Password <?php if($action == 'edit') echo '(leave blank to keep current password)'; ?></label>
+                <input type="password" name="password" <?php if($action == 'add') echo 'required'; ?> >
             </div>
             <button type="submit" class="btn btn-primary">Save Veterinarian</button>
             <a href="?page=veterinarians" class="btn btn-secondary">Cancel</a>
@@ -98,11 +120,11 @@ if ($action == 'add' || $action == 'edit') {
             </thead>
             <tbody>
                 <?php
-                $result = $conn->query("SELECT * FROM veterinarians ORDER BY name ASC");
+                $result = $conn->query("SELECT id, firstname, lastname, email, phone FROM users WHERE role = 'veterinarian' ORDER BY lastname, firstname ASC");
                 if ($result->num_rows > 0) {
                     while($row = $result->fetch_assoc()) {
                         echo "<tr>";
-                        echo "<td>" . get_vet_name($row['name']) . "</td>";
+                        echo "<td>" . get_vet_name(e($row['firstname']) . ' ' . e($row['lastname'])) . "</td>";
                         echo "<td>" . e($row['email']) . "</td>";
                         echo "<td>" . e($row['phone']) . "</td>";
                         echo '<td class="actions">';
